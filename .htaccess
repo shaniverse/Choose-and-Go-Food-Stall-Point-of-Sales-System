@@ -1,0 +1,44 @@
+# Prevent directory listing
+Options -Indexes
+
+# Set default character set
+AddDefaultCharset UTF-8
+
+# Protect files and directories
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protect sensitive files
+<FilesMatch "\.(ini|log|sh|inc|bak|env|sql)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Enable URL rewriting
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Handle Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+    
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+</IfModule>
+
+# Redirect errors to custom pages
+ErrorDocument 403 /IM%20FINAL%20FOODSTALL%20SYSTEM/error_pages/403.php
+ErrorDocument 404 /IM%20FINAL%20FOODSTALL%20SYSTEM/error_pages/404.php
+ErrorDocument 500 /IM%20FINAL%20FOODSTALL%20SYSTEM/error_pages/500.php
+
+# Disable server signature
+ServerSignature Off
+
+# Set timezone
+<IfModule mod_php7.c>
+    php_value date.timezone 'Asia/Manila'
+</IfModule>
